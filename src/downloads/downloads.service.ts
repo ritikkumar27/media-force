@@ -12,7 +12,7 @@ export class DownloadsService {
     private downloads: DownloadItem[] = [];
 
     addDownload(url : string) {
-        const id = Date.now().toString();
+        const id = Date.now().toString(); //fakeID
         const newDownload: DownloadItem = {
             id,
             url,

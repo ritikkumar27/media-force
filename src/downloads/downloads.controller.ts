@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { DownloadsService } from './downloads.service';
+import { CreateDownloadDto } from './dto/create-download.dto';
 
 @Controller('downloads')
 export class DownloadsController {
@@ -9,11 +10,8 @@ export class DownloadsController {
 
     // handles POST localhost:3000/downloads
     @Post()
-    addDownload(@Body('url') url: string){
-        if(!url){
-            return {error: 'URL is requires'};
-        }
-        return this.downloadsService.addDownload(url);
+    addDownload(@Body() createDownloadDto: CreateDownloadDto){
+        return this.downloadsService.addDownload(createDownloadDto.url);
     }
 
     // handles GET localhost:3000/downloads
@@ -21,8 +19,5 @@ export class DownloadsController {
     getDownloads(){
         return this.downloadsService.getDownloads();
     }
-
-
-
 
 }
