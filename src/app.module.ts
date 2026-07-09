@@ -18,7 +18,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
       type: 'postgres',
-      host: configService.get<string>('DB_HOST'),
+      
+      // also i could have used process.env here but for testing and edge cases i decided not to
+      
+      host: configService.get<string>('DB_HOST'), 
       port: configService.get<number>('DB_PORT'),
       username: configService.get<string>('POSTGRES_USER'),
       password: configService.get<string>('POSTGRES_PASSWORD'),

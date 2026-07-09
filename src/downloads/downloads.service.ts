@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Download } from './entities/download.entity';
+import { Repository } from 'typeorm';
 
 export interface DownloadItem {
     id: string;
@@ -9,22 +12,21 @@ export interface DownloadItem {
 
 @Injectable()
 export class DownloadsService {
-    private downloads: DownloadItem[] = [];
 
-    addDownload(url : string) {
-        const id = Date.now().toString(); //fakeID
-        const newDownload: DownloadItem = {
-            id,
-            url,
-            status: 'pending',
-        };
+    constructor(
+        @InjectRepository(Download)
+        private readonly downloadRepository: Repository<Download>,
+    ){}
+    
+    async addDownload(url: string){
+        const newDownload = this.downloadRepository.create({url});
 
-        this.downloads.push(newDownload);
-        return newDownload;
+        return await this.downloadRepository.save(newDownload);
     }
 
-    getDownloads() {
-        return this.downloads;
+    async getDownloads(){
+        return await this.downloadRepository.find({
+            order: {createdAt: 'DESC'}
+        });
     }
-
 }
