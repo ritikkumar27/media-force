@@ -4,11 +4,18 @@ import { DownloadsService } from './downloads.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Download } from './entities/download.entity';
 import { YtDlpService } from './yt-dlp/yt-dlp.service';
+import { BullModule } from '@nestjs/bullmq';
+import { DownloadsProcessor } from './downloads.processor';
 
 @Module({
+  imports: [
+    TypeOrmModule.forFeature([Download]),
 
-  imports: [TypeOrmModule.forFeature([Download])],
+    BullModule.registerQueue({
+      name: 'downloads',
+    }),
+  ],
   controllers: [DownloadsController],
-  providers: [DownloadsService, YtDlpService]
+  providers: [DownloadsService, YtDlpService, DownloadsProcessor],
 })
 export class DownloadsModule {}
