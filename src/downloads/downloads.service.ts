@@ -18,14 +18,18 @@ export class DownloadsService {
         private readonly downloadRepository: Repository<Download>,
     ){}
     
-    async addDownload(url: string){
-        const newDownload = this.downloadRepository.create({url});
+    async addDownload(url: string, userId: string){
+        const newDownload = this.downloadRepository.create({
+            url,
+            userId
+        });
 
         return await this.downloadRepository.save(newDownload);
     }
 
-    async getDownloads(){
+    async getDownloads(userId: string){
         return await this.downloadRepository.find({
+            where: {userId},
             order: {createdAt: 'DESC'}
         });
     }

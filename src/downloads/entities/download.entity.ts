@@ -12,6 +12,9 @@ export class Download {
     @Column({default: 'pending'}) //default pending
     status: string;
 
+    @Column()
+    userId: string
+
     @CreateDateColumn() // autosave the time row is inserted
     createdAt: Date;
 
