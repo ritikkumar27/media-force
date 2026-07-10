@@ -16,5 +16,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7-alpine
+    container_name: mediaforce_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    
+
 volumes:
   postgres_data:
