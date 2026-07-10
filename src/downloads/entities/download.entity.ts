@@ -15,6 +15,13 @@ export class Download {
     @Column()
     userId: string
 
+
+    @Column({nullable: true})
+    title: string;
+
+    @Column({nullable: true})
+    thumbnail: string;
+
     @CreateDateColumn() // autosave the time row is inserted
     createdAt: Date;
 
