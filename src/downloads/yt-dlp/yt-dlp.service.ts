@@ -39,4 +39,51 @@ export class YtDlpService {
       });
     });
   }
+
+  async executeDownload(
+    url: string,
+    downloadId: string,
+    onProgress: (progress: number) => void,
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const outputPath = `./storage/${downloadId}.%(ext)s`; //%(ext)s is a special variable recognised by ytdlp engine
+
+      const ytDlpProcess = spawn('yt-dlp', [
+        '--newline', //prints a clean line every time the progress
+        '-o',
+        outputPath,
+        url,
+      ]);
+
+      ytDlpProcess.stdout.on('data', (chunk) => {
+        const line = chunk.toString();
+
+        const progressMatch = line.match(/\[download\]\s+(\d+\.\d+)%/);
+
+        if (progressMatch && progressMatch[1]) {
+          const percentage = parseFloat(progressMatch[1]);
+          onProgress(percentage);
+        }
+      });
+
+      //handling completion of the download event
+
+      ytDlpProcess.on('close', (code) => {
+        if (code === 0) {
+          resolve('Download completed successfully');
+        } else {
+          reject(
+            new InternalServerErrorException(
+              `Download failed with code ${code}`,
+            ),
+          );
+        }
+      });
+
+      // handle hard errors
+      ytDlpProcess.on('error', (err) => {
+        reject(new InternalServerErrorException('Process failed to start'));
+      });
+    });
+  }
 }
