@@ -5,8 +5,11 @@ import {
   OnQueueEvent,
 } from '@nestjs/bullmq';
 import { Server } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
+import { WsGuard } from 'src/auth/ws.guard';
 
+
+@UseGuards(WsGuard)
 @WebSocketGateway({ cors: true })
 @QueueEventsListener('downloads')
 export class DownloadsGateway extends QueueEventsHost {
