@@ -2,12 +2,21 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { Logger } from '@nestjs/common';
 import { YtDlpService } from './yt-dlp/yt-dlp.service';
+import { Download } from './entities/download.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Processor('downloads')
 export class DownloadsProcessor extends WorkerHost {
   private readonly logger = new Logger(DownloadsProcessor.name);
 
-  constructor(private readonly ytDlpService: YtDlpService) {
+  constructor(
+    private readonly ytDlpService: YtDlpService,
+
+    @InjectRepository(Download)
+    private downloadRepository: Repository<Download>,
+  
+  ) {
     super();
   }
 
@@ -24,8 +33,21 @@ export class DownloadsProcessor extends WorkerHost {
           this.logger.debug(`Job ${job.id} Progress: ${progressPercentage}%`);
         },
       );
-      this.logger.log(`Job ${job.id} completed successfully!`);
+
+      await this.downloadRepository.update(job.data.downloadId, {
+        status: 'completed'
+      });
+
+
+      this.logger.log(`Job ${job.id} completed successfully! Database updated.`);
+
+
     } catch (error) {
+
+      await this.downloadRepository.update(job.data.downloadId, {
+        status: 'failed',
+      });
+
       this.logger.error(`Job ${job.id} failed:`, error.message);
       throw error;
     }
