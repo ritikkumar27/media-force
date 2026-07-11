@@ -39,6 +39,9 @@ export class DownloadsService {
     await this.downloadsQueue.add('process-video', {
       url: savedDownload.url,
       downloadId: savedDownload.id,
+    }, {
+      jobId: savedDownload.id, //forcing bullmq to use our databse uuid for job id
+
     });
 
     return savedDownload;

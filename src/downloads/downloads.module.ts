@@ -6,6 +6,7 @@ import { Download } from './entities/download.entity';
 import { YtDlpService } from './yt-dlp/yt-dlp.service';
 import { BullModule } from '@nestjs/bullmq';
 import { DownloadsProcessor } from './downloads.processor';
+import { DownloadsGateway } from './downloads/downloads.gateway';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { DownloadsProcessor } from './downloads.processor';
     }),
   ],
   controllers: [DownloadsController],
-  providers: [DownloadsService, YtDlpService, DownloadsProcessor],
+  providers: [DownloadsService, YtDlpService, DownloadsProcessor, DownloadsGateway],
 })
 export class DownloadsModule {}
