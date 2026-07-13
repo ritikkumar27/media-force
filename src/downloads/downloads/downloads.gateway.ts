@@ -1,4 +1,4 @@
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection } from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';
 
 import {
   QueueEventsHost,
@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 
 
 @UseGuards(WsGuard)
+
 @WebSocketGateway({ cors: true })
 @QueueEventsListener('downloads')
 export class DownloadsGateway extends QueueEventsHost implements OnGatewayConnection {
@@ -59,5 +60,24 @@ export class DownloadsGateway extends QueueEventsHost implements OnGatewayConnec
     // this.server.emit('global-progress', {jobId, data}); // remove : for socket io testing remove in production
 
     this.logger.debug(`Broadcasted ${data}% for Job ${jobId}`);
+  }
+
+
+  @UseGuards(WsGuard)
+  @SubscribeMessage('subscribeToJob')
+  handleSubscribeToJob(
+    @MessageBody() jobId: string,
+    @ConnectedSocket() client: Socket
+  ){
+
+    const roomName = `job-room-${jobId}`;
+    client.join(roomName);
+
+    this.logger.debug(`Client ${client.id} joined room: ${roomName}`);
+
+    return {status: 'Subscribed successfully'};
+
+
+
   }
 }
