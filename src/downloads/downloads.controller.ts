@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common'
 import { DownloadsService } from './downloads.service';
 import { CreateDownloadDto } from './dto/create-download.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 
 @UseGuards(AuthGuard)
