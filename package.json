@@ -1,0 +1,12 @@
+{
+  "name": "media-force-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "turbo": "^2.10.5"
+  }
+}
