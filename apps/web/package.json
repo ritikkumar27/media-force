@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@media-force/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
