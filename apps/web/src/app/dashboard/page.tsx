@@ -1,29 +1,57 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
+import { useSocket } from "@/hooks/useSocket";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function DashboardPage() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [jobData, setJobData] = useState<any>(null);
+  
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
+  
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket || !jobId) return;
+
+    const eventName = `download-progress-${jobId}`;
+
+    socket.on(eventName, (data: number | string) => {
+      const progressValue = typeof data === 'string' ? parseFloat(data) : data;
+      setProgress(progressValue);
+    });
+
+    return () => {
+      socket.off(eventName);
+    };
+  }, [socket, jobId]);
 
   const handleDownload = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setJobData(null);
+    setJobId(null);
+    setProgress(0); 
 
     try {
       const response = await api.post("/downloads", { url });
       
-      setJobData(response.data);
+      const newJobId = response.data.id || response.data.jobId; 
+      
+      if (newJobId) {
+        setJobId(newJobId);
+      } else {
+        setError("Failed to get Job ID from backend response.");
+      }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to process URL. Check terminal logs.");
+      setError(err.response?.data?.message || "Failed to start download.");
     } finally {
       setLoading(false);
     }
@@ -33,18 +61,15 @@ export default function DashboardPage() {
     <main className="min-h-screen bg-gray-950 p-8 text-white">
       <div className="max-w-4xl mx-auto space-y-8">
         
-        {/* Header Section */}
         <header className="flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight">Media Force Dashboard</h1>
-          {/*add a User Profile / Logout button here*/}
         </header>
 
-        {/* URL Input Form */}
         <Card className="bg-gray-900 border-gray-800 text-white">
           <CardHeader>
             <CardTitle>New Download Job</CardTitle>
             <CardDescription className="text-gray-400">
-              Paste a video URL to fetch metadata and queue the download worker.
+              Paste a video URL to queue the download worker.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -58,25 +83,35 @@ export default function DashboardPage() {
                 required
               />
               <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
-                {loading ? "Processing..." : "Start Download"}
+                {loading ? "Starting..." : "Start Download"}
               </Button>
             </form>
             {error && <p className="text-red-500 mt-4 font-medium">{error}</p>}
           </CardContent>
         </Card>
 
-        {jobData && (
-          <Card className="bg-gray-900 border-gray-800 text-white">
+        {/* Real-Time Progress Bar Section */}
+        {jobId && (
+          <Card className="bg-gray-900 border-gray-800 text-white shadow-xl border-blue-900/30">
             <CardHeader>
-              <CardTitle>Job Created Successfully!</CardTitle>
+              <CardTitle className="text-blue-400">Downloading...</CardTitle>
               <CardDescription className="text-gray-400">
-                This is the raw data returned from your NestJS endpoint.
+                Job ID: <span className="font-mono text-xs">{jobId}</span>
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <pre className="bg-black p-4 rounded-md overflow-x-auto text-sm text-green-400">
-                {JSON.stringify(jobData, null, 2)}
-              </pre>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between text-sm font-medium">
+                <span>Progress</span>
+                <span>{progress.toFixed(1)}%</span>
+              </div>
+              {/* The Shadcn Progress Component */}
+              <Progress value={progress} className="h-3 bg-gray-800" />
+              
+              {progress >= 100 && (
+                <p className="text-green-500 font-medium text-center pt-4">
+                  Download Complete!
+                </p>
+              )}
             </CardContent>
           </Card>
         )}
