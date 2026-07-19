@@ -21,6 +21,8 @@ async function bootstrap() {
     whitelist: true,
   }));
 
+
+  app.enableCors();  // remove in production ; this is a trick not a for produvtion
   await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
