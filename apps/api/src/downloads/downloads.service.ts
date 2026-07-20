@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Download } from './entities/download.entity';
 import { Repository } from 'typeorm';
 import { YtDlpService } from './yt-dlp/yt-dlp.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { NotFoundError } from 'rxjs';
+import path from 'path';
+import fs from 'fs';
 
 export interface DownloadItem {
   id: string;
@@ -52,5 +55,38 @@ export class DownloadsService {
       where: { userId },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async getFileStream(downloadId: string, userId: string){
+
+    const download = await this.downloadRepository.findOne({
+      where: {id: downloadId}
+    });
+
+    if (!download) throw new NotFoundException('Download not found');
+    if (download.userId !== userId) throw new UnauthorizedException('Not your file!');
+    if (download.status !== 'completed') throw new NotFoundException('File not ready');
+
+    const storageDir = path.resolve(process.cwd(), 'storage');
+    const files = fs.readdirSync(storageDir);
+    const downloadedFile = files.find(file => file.startsWith(downloadId));
+
+    if (!downloadedFile) {
+      throw new NotFoundException('File is missing from the server hard drive');
+    }
+
+    const filePath = path.join(storageDir, downloadedFile);
+
+    const stream = fs.createReadStream(filePath);
+    const extension = path.extname(downloadedFile);
+
+    return {
+      stream,
+
+      filename: `${download.title}${extension}`
+    };
+
+
+
   }
 }

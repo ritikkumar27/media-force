@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Request, Res, StreamableFile, UseGuards } from '@nestjs/common';
 import { DownloadsService } from './downloads.service';
 import { CreateDownloadDto } from './dto/create-download.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {Response} from 'express';
 
 @ApiTags('Downloads')
 @ApiBearerAuth()
@@ -30,6 +31,39 @@ export class DownloadsController {
 
         const userId = req.user.sub;
         return this.downloadsService.getDownloads(userId);
+    }
+
+
+    // @Get(':id/file')
+    // async downloadFile(
+    //     @Param('id') id: string,
+    //     @Req() req: any,
+    //     @Res({passthrough: true}) res: Response
+    // ) {
+
+    //     const {stream, filename} = await this.downloadsService.getFileStream(id, req.user.sub);
+
+    //     res.set({
+    //         'Content-TYpe' : 'application/octet=stream',
+    //         'Content-Disposition': `attachment; filename="${filename}"`,
+    //     });
+
+    //     return new StreamableFile(stream);
+
+    // }
+
+    @Get(':id/file')
+    async downloadFile(
+        @Param('id') id: string, 
+        @Req() req: any, 
+        @Res({ passthrough: true }) res: any // i am using any type because i don't want to fight with monorepo workspace types right now
+    ){
+        const { stream, filename } = await this.downloadsService.getFileStream(id, req.user.sub);
+        res.set({
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        });
+        return new StreamableFile(stream);
     }
 
 }
