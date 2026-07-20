@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useAuth } from "@/store/useAuth";
 
 export default function DashboardPage() {
   const [url, setUrl] = useState("");
@@ -17,6 +18,8 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
   
   const socket = useSocket();
+
+  const {token} = useAuth();
 
   useEffect(() => {
     if (!socket || !jobId) return;
@@ -108,9 +111,27 @@ export default function DashboardPage() {
               <Progress value={progress} className="h-3 bg-gray-800" />
               
               {progress >= 100 && (
-                <p className="text-green-500 font-medium text-center pt-4">
-                  Download Complete!
-                </p>
+
+                <div className="flex flex-col items-center gap-4 pt-4">
+                  <p className="text-green-500 font-medium text-center pt-4">
+                    Download Complete!
+                  </p>
+
+                  <a
+                    href={`http://localhost:3001/downloads/${jobId}/file?token=${token}`}
+                    target="_blnk"
+                    rel="noopener noreferrer"
+                  
+                  >
+
+                    <Button variant="default" className="bg-green-600 hover:bg-green-700">
+                      Save Video to Computer
+                    </Button>
+                  </a>
+
+
+
+                </div>
               )}
             </CardContent>
           </Card>
