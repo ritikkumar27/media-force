@@ -33,25 +33,6 @@ export class DownloadsController {
         return this.downloadsService.getDownloads(userId);
     }
 
-
-    // @Get(':id/file')
-    // async downloadFile(
-    //     @Param('id') id: string,
-    //     @Req() req: any,
-    //     @Res({passthrough: true}) res: Response
-    // ) {
-
-    //     const {stream, filename} = await this.downloadsService.getFileStream(id, req.user.sub);
-
-    //     res.set({
-    //         'Content-TYpe' : 'application/octet=stream',
-    //         'Content-Disposition': `attachment; filename="${filename}"`,
-    //     });
-
-    //     return new StreamableFile(stream);
-
-    // }
-
     @Get(':id/file')
     async downloadFile(
         @Param('id') id: string, 

@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
   private extractTokenFromHeader(request: Request): string | undefined {
 
     if (request.query.token && typeof request.query.token === 'string') {
-      return request.query.token;
+      return request.query.token; 
     }
 
 

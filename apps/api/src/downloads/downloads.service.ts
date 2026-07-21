@@ -69,7 +69,11 @@ export class DownloadsService {
 
     const storageDir = path.resolve(process.cwd(), 'storage');
     const files = fs.readdirSync(storageDir);
-    const downloadedFile = files.find(file => file.startsWith(downloadId));
+
+    //shorthand arrow function
+    const downloadedFile = files.find(
+      file => file.startsWith(downloadId)); 
+      
 
     if (!downloadedFile) {
       throw new NotFoundException('File is missing from the server hard drive');

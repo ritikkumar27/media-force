@@ -13,6 +13,7 @@ MediaForce is designed using enterprise-grade computer science principles, compl
 * **Real-Time Data Bridge**: Using **Socket.io**, the background workers broadcast live download percentages through a secure TCP WebSocket pipeline directly to the frontend React components.
 * **Security**: JWT-based authentication. HTTP requests are protected via `AuthGuard`, and WebSockets are secured at the handshake level via a custom `WsGuard`.
 * **State Persistence**: A relational PostgreSQL database strictly tracks user ownership and download lifecycles (`pending`, `completed`, `failed`).
+* **File Distribution**: Completed media files are dynamically streamed from the server to the client using Node.js Streams and optimized anchor tags (`<a>`), preventing browser memory crashes for multi-gigabyte files.
 
 ---
 
