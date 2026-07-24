@@ -2,6 +2,8 @@ apps/api/storage/*.mp4
 apps/api/storage/*.webm
 /storage
 
+.turbo
+
 
 
 # compiled output
