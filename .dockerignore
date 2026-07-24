@@ -1,0 +1,14 @@
+# media-force/.dockerignore
+node_modules
+dist
+.turbo
+apps/*/node_modules
+apps/*/dist
+apps/*/.next
+packages/*/node_modules
+packages/*/dist
+.git
+.gitignore
+.env
+.DS_Store
+README.md
