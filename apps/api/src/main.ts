@@ -23,6 +23,6 @@ async function bootstrap() {
 
 
   app.enableCors();  // remove in production ; this is a trick not a for produvtion
-  await app.listen(process.env.PORT ?? 3001);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

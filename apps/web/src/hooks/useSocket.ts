@@ -10,7 +10,7 @@ export const useSocket = () => {
   useEffect(() => {
     if (!token) return;
 
-    const socketInstance = io('http://localhost:3001', {
+    const socketInstance = io({
       auth: {
         token: token,
       },

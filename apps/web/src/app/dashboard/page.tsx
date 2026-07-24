@@ -118,7 +118,7 @@ export default function DashboardPage() {
                   </p>
 
                   <a
-                    href={`http://localhost:3001/downloads/${jobId}/file?token=${token}`}
+                    href={`/api/downloads/${jobId}/file?token=${token}`}
                     target="_blnk"
                     rel="noopener noreferrer"
                   
