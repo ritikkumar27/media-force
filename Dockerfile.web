@@ -38,11 +38,22 @@ RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
 
-COPY --from=installer /app .
+# COPY --from=installer /app .
+
+# optimised stanalone next.js build
+# Next.js standalone doesn't include static files by default, so copying them manually
+
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
 
 
 EXPOSE 3000
 
 # CMD ["npm", "run", "start", "-w", "@media-force/web"]
-CMD ["node", "apps/web/.next/standalone/server.js"]
+# CMD ["node", "apps/web/.next/standalone/server.js"]
+
+# Standalone creates its own server.js file so no need to npm to start it!
+CMD ["node", "apps/web/server.js"]
+
