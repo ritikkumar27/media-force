@@ -8,7 +8,7 @@ RUN apk update && apk add --no-cache libc6-compat
 WORKDIR /app
 RUN npm install -g turbo
 COPY . .
-RUN turbo prune api --docker
+RUN turbo prune @media-force/api --docker
 
 #Stage 2 : install dependencies and build
 
