@@ -4,6 +4,8 @@ apps/api/storage/*.webm
 
 .turbo
 
+compose.yaml
+
 
 
 # compiled output
