@@ -71,6 +71,31 @@ RUN npx turbo run build --filter=@media-force/api
 #         ▼
 # Compiled dist/
 
+RUN npm prune --omit=dev
+
+#Stage 3 : production runner
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# non-root user for security
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system -uid 1001 nestjs
+USER nestjs
+# i changed permission 
+RUN chown -R nestjs:nodejs /app
+
+# copying bult app and production node modules
+COPY --from=installer /app .
+
+EXPOSE 3000
+
+CMD ["node", "apps/api/dist/main.js"]
+
+
+
+
 
 
 
