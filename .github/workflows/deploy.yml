@@ -55,7 +55,7 @@ jobs:
 
     deploy:
         needs: build-and-push
-        runs-on: mediaforce
+        runs-on: homelab mediaforce
 
         steps:
             - name: Pull and Deploy on Homelab
