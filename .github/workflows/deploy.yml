@@ -63,7 +63,7 @@ jobs:
                 # -> login to ghcr because my repo is private
                 echo "${{secrets.GITHUB_TOKEN}}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-                cd /srv/docker/mediaforce
+                cd /srv/docker/apps/mediaforce
 
                 docker compose pull
                 docker compose up -d          
