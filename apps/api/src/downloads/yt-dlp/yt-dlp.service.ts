@@ -66,6 +66,11 @@ export class YtDlpService {
         }
       });
 
+      let errorOutput = '';
+      ytDlpProcess.stderr.on('data', (chunk) => {
+        errorOutput += chunk.toString();
+      });
+
       //handling completion of the download event
 
       ytDlpProcess.on('close', (code) => {
@@ -74,7 +79,7 @@ export class YtDlpService {
         } else {
           reject(
             new InternalServerErrorException(
-              `Download failed with code ${code}`,
+              `Download failed with code ${code}. Error: ${errorOutput}`
             ),
           );
         }
