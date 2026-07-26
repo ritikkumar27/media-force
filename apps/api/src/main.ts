@@ -16,10 +16,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
     
+  app.setGlobalPrefix('api');
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
   }));
+
+
 
 
   app.enableCors();  // remove in production ; this is a trick not a for produvtion
