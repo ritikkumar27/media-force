@@ -87,6 +87,8 @@ RUN adduser --system --uid 1001 nestjs
 
 # i changed permission 
 RUN chown -R nestjs:nodejs /app
+RUN mkdir -p /app/storage && chown -R nestjs:nodejs /app/storage
+
 USER nestjs
 # copying bult app and production node modules
 COPY --chown=nestjs:nodejs --from=installer /app .
