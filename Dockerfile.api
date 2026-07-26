@@ -89,7 +89,7 @@ RUN adduser --system --uid 1001 nestjs
 RUN chown -R nestjs:nodejs /app
 USER nestjs
 # copying bult app and production node modules
-COPY --from=installer /app .
+COPY --chown=nestjs:nodejs --from=installer /app .
 
 EXPOSE 3000
 
