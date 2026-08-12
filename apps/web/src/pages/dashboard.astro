@@ -1,0 +1,133 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <main class="min-h-screen bg-base-200 p-8">
+    <div class="max-w-4xl mx-auto space-y-8">
+      
+      <header class="flex items-center justify-between">
+        <h1 class="text-3xl font-bold tracking-tight">Media Force Dashboard</h1>
+        <button id="logout-btn" class="btn btn-ghost btn-sm text-error">Logout</button>
+      </header>
+
+      <div class="card bg-base-100 shadow-xl border border-base-300">
+        <div class="card-body">
+          <h2 class="card-title">New Download Job</h2>
+          <p class="text-base-content/70">Paste a video URL to queue the download worker.</p>
+          
+          <form id="download-form" class="flex gap-4 mt-4">
+            <input type="url" id="yt-url" placeholder="https://youtube.com/watch?v=..." class="input input-bordered flex-1" required />
+            <button type="submit" id="start-btn" class="btn btn-primary">Start Download</button>
+          </form>
+          <p id="dashboard-error" class="text-error mt-4 font-medium hidden"></p>
+        </div>
+      </div>
+
+      <!-- Real-Time Progress Bar Section (Hidden initially) -->
+      <div id="progress-card" class="card bg-base-100 shadow-xl border border-primary/30 hidden">
+        <div class="card-body space-y-4">
+          <h2 class="card-title text-primary">Downloading...</h2>
+          <p class="text-base-content/70 text-sm">Job ID: <span id="job-id-text" class="font-mono"></span></p>
+          
+          <div class="flex justify-between text-sm font-medium">
+            <span>Progress</span>
+            <span id="progress-text">0.0%</span>
+          </div>
+          <!-- DaisyUI Progress Bar -->
+          <progress id="progress-bar" class="progress progress-primary w-full" value="0" max="100"></progress>
+          
+          <div id="download-complete-section" class="flex flex-col items-center gap-4 pt-4 hidden">
+            <p class="text-success font-medium text-center">Download Complete!</p>
+            <a id="save-video-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-success">
+              Save Video to Computer
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { io } from "socket.io-client";
+
+  // --- Auth Check ---
+  const token = localStorage.getItem('mediaforce_token');
+  if (!token) window.location.href = '/login';
+
+  document.getElementById('logout-btn')?.addEventListener('click', () => {
+    localStorage.removeItem('mediaforce_token');
+    window.location.href = '/login';
+  });
+
+  // --- Socket & Download Logic ---
+  // NOTE: Update URL to your NestJS server
+  const socket = io("http://localhost:3000"); 
+
+  const form = document.getElementById('download-form');
+  const urlInput = document.getElementById('yt-url') as HTMLInputElement;
+  const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+  const errorMsg = document.getElementById('dashboard-error');
+  
+  const progressCard = document.getElementById('progress-card');
+  const jobIdText = document.getElementById('job-id-text');
+  const progressText = document.getElementById('progress-text');
+  const progressBar = document.getElementById('progress-bar') as HTMLProgressElement;
+  const completeSection = document.getElementById('download-complete-section');
+  const saveVideoBtn = document.getElementById('save-video-btn') as HTMLAnchorElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(errorMsg) errorMsg.classList.add('hidden');
+    startBtn.disabled = true;
+    startBtn.textContent = 'Starting...';
+
+    try {
+      // NOTE: Update URL to your NestJS API
+      const response = await fetch('http://localhost:3000/downloads', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ url: urlInput.value })
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Failed to start download');
+
+      const jobId = data.id || data.jobId;
+      
+      // Show the progress card
+      if(progressCard) progressCard.classList.remove('hidden');
+      if(completeSection) completeSection.classList.add('hidden');
+      if(jobIdText) jobIdText.textContent = jobId;
+      progressBar.value = 0;
+      if(progressText) progressText.textContent = '0.0%';
+
+      // Listen for socket events specific to this Job ID
+      socket.on(`download-progress-${jobId}`, (progressData: number | string) => {
+        const val = typeof progressData === 'string' ? parseFloat(progressData) : progressData;
+        progressBar.value = val;
+        if(progressText) progressText.textContent = `${val.toFixed(1)}%`;
+
+        if (val >= 100) {
+          if(completeSection) completeSection.classList.remove('hidden');
+          // Set the final download link
+          saveVideoBtn.href = `http://localhost:3000/api/downloads/${jobId}/file?token=${token}`;
+        }
+      });
+
+    } catch (err: any) {
+      if(errorMsg) {
+        errorMsg.textContent = err.message;
+        errorMsg.classList.remove('hidden');
+      }
+    } finally {
+      startBtn.disabled = false;
+      startBtn.textContent = 'Start Download';
+    }
+  });
+</script>
