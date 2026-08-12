@@ -6,6 +6,8 @@ apps/api/storage/*.webm
 
 compose.yaml
 
+.env.example
+
 
 
 # compiled output

@@ -63,8 +63,11 @@ import Layout from '../layouts/Layout.astro';
   });
 
   // --- Socket & Download Logic ---
-  // NOTE: Update URL to your NestJS server
-  const socket = io("http://localhost:3000"); 
+  const socket = io("http://localhost:3000", {
+    auth: {
+      token: token
+    }
+  });
 
   const form = document.getElementById('download-form');
   const urlInput = document.getElementById('yt-url') as HTMLInputElement;
