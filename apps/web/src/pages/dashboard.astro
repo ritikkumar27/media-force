@@ -86,7 +86,7 @@ import Layout from '../layouts/Layout.astro';
 
     try {
       // NOTE: Update URL to your NestJS API
-      const response = await fetch('http://localhost:3000/downloads', {
+      const response = await fetch('http://localhost:3000/api/downloads', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
