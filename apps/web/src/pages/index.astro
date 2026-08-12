@@ -4,14 +4,74 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
   <main class="min-h-screen flex items-center justify-center bg-base-200">
-    <div class="card w-96 bg-base-100 shadow-xl">
-      <div class="card-body items-center text-center">
-        <h2 class="card-title text-3xl font-bold text-primary">MediaForce</h2>
-        <p>Your Astro + DaisyUI setup is working perfectly!</p>
-        <div class="card-actions justify-end mt-4">
-          <button class="btn btn-primary">Start Downloading</button>
-        </div>
+    <div class="card w-full max-w-lg bg-base-100 shadow-xl">
+      <div class="card-body text-center">
+        <h2 class="card-title justify-center text-4xl font-bold text-primary mb-4">MediaForce</h2>
+        <p class="mb-6">Download any YouTube video instantly.</p>
+        
+        <form id="download-form" class="flex flex-col gap-4">
+          <input 
+            type="url" 
+            id="yt-url"
+            placeholder="Paste YouTube Link Here..." 
+            class="input input-bordered input-primary w-full" 
+            required
+          />
+          <button type="submit" id="submit-btn" class="btn btn-primary w-full">
+            Download Now
+          </button>
+        </form>
+
+        <!-- A place to show messages or progress -->
+        <div id="status-message" class="mt-4 hidden text-sm"></div>
+
       </div>
     </div>
   </main>
 </Layout>
+
+<script>
+  //Vanilla JavaScript! It only runs on the client.
+  const form = document.getElementById('download-form');
+  const urlInput = document.getElementById('yt-url') as HTMLInputElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const statusMessage = document.getElementById('status-message');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const url = urlInput.value;
+
+    // UI Updates
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="loading loading-spinner"></span> Processing...';
+    if(statusMessage) {
+      statusMessage.classList.remove('hidden');
+      statusMessage.textContent = 'Contacting server...';
+    }
+
+    try {
+      // TODO: Replace with your actual NestJS API endpoint!
+      // const response = await fetch('http://localhost:3000/api/download', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ url })
+      // });
+      
+      // Simulating a network request for now
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      if(statusMessage) {
+        statusMessage.classList.add('text-success');
+        statusMessage.textContent = 'Success! Your download is starting.';
+      }
+    } catch (error) {
+      if(statusMessage) {
+        statusMessage.classList.add('text-error');
+        statusMessage.textContent = 'An error occurred. Please try again.';
+      }
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Download Now';
+    }
+  });
+</script>
