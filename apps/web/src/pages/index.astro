@@ -1,11 +1,17 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-	<Welcome />
+  <main class="min-h-screen flex items-center justify-center bg-base-200">
+    <div class="card w-96 bg-base-100 shadow-xl">
+      <div class="card-body items-center text-center">
+        <h2 class="card-title text-3xl font-bold text-primary">MediaForce</h2>
+        <p>Your Astro + DaisyUI setup is working perfectly!</p>
+        <div class="card-actions justify-end mt-4">
+          <button class="btn btn-primary">Start Downloading</button>
+        </div>
+      </div>
+    </div>
+  </main>
 </Layout>
