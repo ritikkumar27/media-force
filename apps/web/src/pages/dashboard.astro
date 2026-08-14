@@ -52,8 +52,6 @@ import Layout from '../layouts/Layout.astro';
 
 <script>
   import { io } from "socket.io-client";
-  const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
-
 
   // --- Auth Check ---
   const token = localStorage.getItem('mediaforce_token');
@@ -65,7 +63,7 @@ import Layout from '../layouts/Layout.astro';
   });
 
   // --- Socket & Download Logic ---
-  const socket = io(API_URL, {
+  const socket = io("http://localhost:3000", {
     auth: {
       token: token
     }
@@ -91,7 +89,7 @@ import Layout from '../layouts/Layout.astro';
 
     try {
       // NOTE: Update URL to your NestJS API
-      const response = await fetch(`${API_URL}/api/downloads`, {
+      const response = await fetch('http://localhost:3000/api/downloads', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -121,7 +119,7 @@ import Layout from '../layouts/Layout.astro';
         if (val >= 100) {
           if(completeSection) completeSection.classList.remove('hidden');
           // Set the final download link
-          saveVideoBtn.href = `${API_URL}/api/downloads/${jobId}/file?token=${token}`;
+          saveVideoBtn.href = `http://localhost:3000/api/downloads/${jobId}/file?token=${token}`;
         }
       });
 
