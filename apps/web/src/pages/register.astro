@@ -34,3 +34,50 @@ import Layout from '../layouts/Layout.astro';
   </main>
 </Layout>
 
+<script>
+    // grabbing html elements by ids
+    const form = document.getElementById('register-form');
+    const emailInput = document.getElementById('email') as HTMLInputElement;
+    const passwordInput = document.getElementById('password') as HTMLInputElement;
+    const errorMsg = document.getElementById('error-msg');
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+
+
+    // listening for form submission
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if(errorMsg) errorMsg.classList.add('hidden');
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating account...';
+
+        try {
+            // making api request to register endpoint
+            const response = await fetch('http://localhost:3000/api/auth/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: emailInput.value,
+                    password: passwordInput.value,
+                })
+            });
+
+            const data = await response.json();
+
+
+            if(!response.ok){
+                throw new Error(data.message || 'Refistration failed');
+            }
+
+            const token = data.access_token || data.token;
+            localStorage.setItem('mediaforce_token', token);
+
+            window.location.href = '/dashboard';
+        } catch (err: any){
+            if(errorMsg){
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign Up';
+            }
+        }
+    });
+</script>
