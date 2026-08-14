@@ -63,7 +63,8 @@ import Layout from '../layouts/Layout.astro';
   });
 
   // --- Socket & Download Logic ---
-  const socket = io("http://localhost:3000", {
+  const socket = io("", {
+    path: "/socket.io",
     auth: {
       token: token
     }
@@ -89,7 +90,7 @@ import Layout from '../layouts/Layout.astro';
 
     try {
       // NOTE: Update URL to your NestJS API
-      const response = await fetch('http://localhost:3000/api/downloads', {
+      const response = await fetch('/api/downloads', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -119,7 +120,7 @@ import Layout from '../layouts/Layout.astro';
         if (val >= 100) {
           if(completeSection) completeSection.classList.remove('hidden');
           // Set the final download link
-          saveVideoBtn.href = `http://localhost:3000/api/downloads/${jobId}/file?token=${token}`;
+          saveVideoBtn.href = `/api/downloads/${jobId}/file?token=${token}`;
         }
       });
 
