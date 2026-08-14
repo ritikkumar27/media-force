@@ -54,6 +54,7 @@ import Layout from '../layouts/Layout.astro';
         body: JSON.stringify({ email: emailInput.value, password: passwordInput.value })
       });
       
+      
       const data = await response.json();
       
       if (!response.ok) throw new Error(data.message || 'Invalid email or password');
