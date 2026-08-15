@@ -51,3 +51,15 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </div>
 </Layout>
+
+<script>
+  // When the page loads, check if the user has an authentication token in their browser
+  document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem('mediaforce_token');
+    
+    // If they have a token, instantly redirect them to the dashboard
+    if (token) {
+      window.location.href = '/dashboard';
+    }
+  });
+</script>
