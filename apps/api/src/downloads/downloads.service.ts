@@ -57,6 +57,18 @@ export class DownloadsService {
     });
   }
 
+  async getMetadata(url: string){
+    try{
+      const metadata = await this.ytDlpService.fetchMetadata(url);
+      return {
+        title: metadata.title,
+        thumbnail: metadata.thumbnail,
+      };
+    } catch (error) {
+      throw new Error('Failed to fetch video metadata');
+    }
+  }
+
   async getFileStream(downloadId: string, userId: string){
 
     const download = await this.downloadRepository.findOne({
