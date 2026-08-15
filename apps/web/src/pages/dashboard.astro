@@ -3,63 +3,96 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-  <main class="min-h-screen bg-base-200 p-8">
-    <div class="max-w-4xl mx-auto space-y-8">
+  <!-- Premium Navbar -->
+  <div class="navbar bg-base-100 shadow-sm sticky top-0 z-50 px-4 sm:px-8">
+    <div class="flex-1">
+      <a class="btn btn-ghost text-2xl font-black text-primary gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+          <path d="M7 11l5 5l5 -5"></path>
+          <path d="M12 4l0 12"></path>
+        </svg>
+        MediaForce
+      </a>
+    </div>
+    <div class="flex-none">
+      <button id="logout-btn" class="btn btn-outline btn-error btn-sm rounded-full px-6">Logout</button>
+    </div>
+  </div>
+  <main class="min-h-[calc(100vh-4rem)] bg-base-200 p-4 sm:p-8 flex flex-col items-center">
+    
+    <!-- Hero Header -->
+    <div class="text-center mt-12 mb-8 max-w-2xl">
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">What are we downloading today?</h1>
+      <p class="text-lg text-base-content/70">Paste any supported video URL below and our workers will process it instantly.</p>
+    </div>
+    <!-- Main Workspace Area -->
+    <div class="w-full max-w-3xl space-y-8 relative z-10">
       
-      <header class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold tracking-tight">Media Force Dashboard</h1>
-        <button id="logout-btn" class="btn btn-ghost btn-sm text-error">Logout</button>
-      </header>
-
-      <div class="card bg-base-100 shadow-xl border border-base-300">
-        <div class="card-body">
-          <h2 class="card-title">New Download Job</h2>
-          <p class="text-base-content/70">Paste a video URL to queue the download worker.</p>
-          
-          <form id="download-form" class="flex gap-4 mt-4">
-            <input type="url" id="yt-url" placeholder="https://youtube.com/watch?v=..." class="input input-bordered flex-1" required />
-            <button type="submit" id="start-btn" class="btn btn-primary">Start Download</button>
+      <!-- Input Card -->
+      <div class="card bg-base-100 shadow-2xl border border-base-300/50 backdrop-blur-sm">
+        <div class="card-body p-6 sm:p-10">
+          <form id="download-form" class="flex flex-col sm:flex-row gap-4">
+            <div class="relative flex-1">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-base-content/50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+              </div>
+              <input type="url" id="yt-url" placeholder="https://youtube.com/watch?v=..." class="input input-bordered input-lg w-full pl-12 text-lg focus:input-primary transition-colors" required />
+            </div>
+            <button type="submit" id="start-btn" class="btn btn-primary btn-lg sm:w-48 shadow-lg shadow-primary/30 transition-transform active:scale-95">
+              Start
+            </button>
           </form>
-          <p id="dashboard-error" class="text-error mt-4 font-medium hidden"></p>
-
+          <p id="dashboard-error" class="text-error mt-4 font-medium text-center hidden"></p>
           <!-- Thumbnail Preview (Hidden initially) -->
-          <div id="preview-section" class="mt-6 flex flex-col items-center hidden">
-            <div class="relative w-full max-w-sm aspect-video rounded-xl overflow-hidden bg-base-300 shadow-lg">
+          <div id="preview-section" class="mt-8 flex flex-col items-center hidden animate-fade-in">
+            <div class="relative w-full max-w-md aspect-video rounded-2xl overflow-hidden bg-base-300 shadow-inner border border-base-content/10">
               <!-- Loading spinner -->
-              <div id="preview-loading" class="absolute inset-0 flex items-center justify-center">
-                <span class="loading loading-spinner text-primary loading-lg"></span>
+              <div id="preview-loading" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-base-200/80 backdrop-blur-sm z-10">
+                <span class="loading loading-ring loading-lg text-primary"></span>
+                <span class="text-sm font-medium text-base-content/70 animate-pulse">Fetching Metadata...</span>
               </div>
               <!-- Actual image -->
-              <img id="preview-img" class="w-full h-full object-cover hidden" alt="Video Thumbnail" />
+              <img id="preview-img" class="w-full h-full object-cover hidden transition-opacity duration-500" alt="Video Thumbnail" />
             </div>
-            <h3 id="preview-title" class="mt-4 font-semibold text-center text-lg line-clamp-2"></h3>
+            <h3 id="preview-title" class="mt-5 font-bold text-center text-xl line-clamp-2 px-4"></h3>
           </div>
-
         </div>
       </div>
-
-      <!-- Real-Time Progress Bar Section (Hidden initially) -->
-      <div id="progress-card" class="card bg-base-100 shadow-xl border border-primary/30 hidden">
-        <div class="card-body space-y-4">
-          <h2 class="card-title text-primary">Downloading...</h2>
-          <p class="text-base-content/70 text-sm">Job ID: <span id="job-id-text" class="font-mono"></span></p>
-          
-          <div class="flex justify-between text-sm font-medium">
-            <span>Progress</span>
-            <span id="progress-text">0.0%</span>
+      <!-- Real-Time Progress Widget (Hidden initially) -->
+      <div id="progress-card" class="card bg-base-100 shadow-2xl border-t-4 border-t-primary hidden animate-slide-up">
+        <div class="card-body p-6 sm:p-10 space-y-6">
+          <div class="flex justify-between items-center border-b border-base-200 pb-4">
+            <h2 class="card-title text-2xl text-primary gap-3">
+              <span class="loading loading-infinity loading-md"></span>
+              Processing Job
+            </h2>
+            <div class="badge badge-outline font-mono text-xs opacity-70">ID: <span id="job-id-text"></span></div>
           </div>
-          <!-- DaisyUI Progress Bar -->
-          <progress id="progress-bar" class="progress progress-primary w-full" value="0" max="100"></progress>
           
-          <div id="download-complete-section" class="flex flex-col items-center gap-4 pt-4 hidden">
-            <p class="text-success font-medium text-center">Download Complete!</p>
-            <a id="save-video-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-success">
-              Save Video to Computer
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm font-bold tracking-wide uppercase text-base-content/70">
+              <span>Download Progress</span>
+              <span id="progress-text" class="text-primary">0.0%</span>
+            </div>
+            <!-- DaisyUI Progress Bar -->
+            <progress id="progress-bar" class="progress progress-primary w-full h-4" value="0" max="100"></progress>
+          </div>
+          
+          <div id="download-complete-section" class="flex flex-col items-center gap-4 pt-6 hidden animate-fade-in">
+            <div class="avatar placeholder mb-2">
+              <div class="bg-success text-success-content rounded-full w-16">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+              </div>
+            </div>
+            <p class="text-success font-bold text-xl text-center">Ready for Download!</p>
+            <a id="save-video-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-lg w-full sm:w-auto shadow-lg shadow-success/30 px-12">
+              Save to Computer
             </a>
           </div>
         </div>
       </div>
-
     </div>
   </main>
 </Layout>
