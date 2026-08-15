@@ -3,75 +3,51 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-  <main class="min-h-screen flex items-center justify-center bg-base-200">
-    <div class="card w-full max-w-lg bg-base-100 shadow-xl">
-      <div class="card-body text-center">
-        <h2 class="card-title justify-center text-4xl font-bold text-primary mb-4">MediaForce</h2>
-        <p class="mb-6">Download any YouTube video instantly.</p>
+  <!-- Hero Section -->
+  <div class="hero min-h-screen bg-base-200">
+    <div class="hero-content text-center">
+      <div class="max-w-2xl">
+        <h1 class="text-5xl font-extrabold text-primary mb-8 tracking-tight">
+          Unleash the Power of <br/> <span class="text-secondary">Media Force</span>
+        </h1>
+        <p class="py-6 text-xl text-base-content/80 mb-8">
+          The ultimate self-hosted video downloader. Queue up links, process them in the background, and manage your entire media library from one blazing-fast dashboard.
+        </p>
         
-        <form id="download-form" class="flex flex-col gap-4">
-          <input 
-            type="url" 
-            id="yt-url"
-            placeholder="Paste YouTube Link Here..." 
-            class="input input-bordered input-primary w-full" 
-            required
-          />
-          <button type="submit" id="submit-btn" class="btn btn-primary w-full">
-            Download Now
-          </button>
-        </form>
-
-        <!-- A place to show messages or progress -->
-        <div id="status-message" class="mt-4 hidden text-sm"></div>
-
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/register" class="btn btn-primary btn-lg shadow-lg shadow-primary/30">
+            Get Started for Free
+          </a>
+          <a href="/login" class="btn btn-outline btn-lg">
+            I already have an account
+          </a>
+        </div>
       </div>
     </div>
-  </main>
+  </div>
+
+  <!-- Feature Highlights -->
+  <div class="bg-base-100 py-24">
+    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+      
+      <div class="p-6 bg-base-200 rounded-2xl">
+        <div class="text-4xl mb-4">⚡</div>
+        <h3 class="text-xl font-bold mb-2">Lightning Fast</h3>
+        <p class="text-base-content/70">Powered by Turborepo, Astro, and NestJS for maximum performance.</p>
+      </div>
+
+      <div class="p-6 bg-base-200 rounded-2xl">
+        <div class="text-4xl mb-4">🔄</div>
+        <h3 class="text-xl font-bold mb-2">Background Processing</h3>
+        <p class="text-base-content/70">Close the tab. We process your downloads in the background using Redis queues.</p>
+      </div>
+
+      <div class="p-6 bg-base-200 rounded-2xl">
+        <div class="text-4xl mb-4">🔒</div>
+        <h3 class="text-xl font-bold mb-2">Private & Secure</h3>
+        <p class="text-base-content/70">Self-hosted on your own homelab. You own your data and your bandwidth.</p>
+      </div>
+
+    </div>
+  </div>
 </Layout>
-
-<script>
-  //Vanilla JavaScript! It only runs on the client.
-  const form = document.getElementById('download-form');
-  const urlInput = document.getElementById('yt-url') as HTMLInputElement;
-  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
-  const statusMessage = document.getElementById('status-message');
-
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const url = urlInput.value;
-
-    // UI Updates
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="loading loading-spinner"></span> Processing...';
-    if(statusMessage) {
-      statusMessage.classList.remove('hidden');
-      statusMessage.textContent = 'Contacting server...';
-    }
-
-    try {
-      // TODO: Replace with your actual NestJS API endpoint!
-      // const response = await fetch('http://localhost:3000/api/download', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ url })
-      // });
-      
-      // Simulating a network request for now
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      if(statusMessage) {
-        statusMessage.classList.add('text-success');
-        statusMessage.textContent = 'Success! Your download is starting.';
-      }
-    } catch (error) {
-      if(statusMessage) {
-        statusMessage.classList.add('text-error');
-        statusMessage.textContent = 'An error occurred. Please try again.';
-      }
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Download Now';
-    }
-  });
-</script>
