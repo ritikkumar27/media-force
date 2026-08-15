@@ -1,5 +1,5 @@
 @import "tailwindcss";
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: forest;
+  themes: forest, retro, valentine, autumn, coffee, cupcake, dim, nord;
 }
