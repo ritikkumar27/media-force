@@ -21,6 +21,20 @@ import Layout from '../layouts/Layout.astro';
             <button type="submit" id="start-btn" class="btn btn-primary">Start Download</button>
           </form>
           <p id="dashboard-error" class="text-error mt-4 font-medium hidden"></p>
+
+          <!-- Thumbnail Preview (Hidden initially) -->
+          <div id="preview-section" class="mt-6 flex flex-col items-center hidden">
+            <div class="relative w-full max-w-sm aspect-video rounded-xl overflow-hidden bg-base-300 shadow-lg">
+              <!-- Loading spinner -->
+              <div id="preview-loading" class="absolute inset-0 flex items-center justify-center">
+                <span class="loading loading-spinner text-primary loading-lg"></span>
+              </div>
+              <!-- Actual image -->
+              <img id="preview-img" class="w-full h-full object-cover hidden" alt="Video Thumbnail" />
+            </div>
+            <h3 id="preview-title" class="mt-4 font-semibold text-center text-lg line-clamp-2"></h3>
+          </div>
+
         </div>
       </div>
 
