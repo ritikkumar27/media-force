@@ -95,6 +95,12 @@ import Layout from '../layouts/Layout.astro';
   const progressBar = document.getElementById('progress-bar') as HTMLProgressElement;
   const completeSection = document.getElementById('download-complete-section');
   const saveVideoBtn = document.getElementById('save-video-btn') as HTMLAnchorElement;
+  const previewSection = document.getElementById('preview-section');
+  const previewLoading = document.getElementById('preview-loading');
+  const previewImg = document.getElementById('preview-img') as HTMLImageElement;
+  const previewTitle = document.getElementById('preview-title');
+
+
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -148,4 +154,46 @@ import Layout from '../layouts/Layout.astro';
       startBtn.textContent = 'Start Download';
     }
   });
+
+
+  urlInput?.addEventListener('input', async (e) => {
+    const url = (e.target as HTMLInputElement).value;
+
+    if (url.startsWith('http')) {
+      if (previewSection) previewSection.classList.remove('hidden');
+      if (previewLoading) previewLoading.classList.remove('hidden');
+      if (previewImg) previewImg.classList.add('hidden');
+      if (previewTitle) previewTitle.textContent = '';
+      if (errorMsg) errorMsg.classList.add('hidden');
+
+      try {
+        const response = await fetch('api/downloads/metadata', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+          },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error();
+
+        if (previewLoading) previewLoading.classList.add('hidden');
+
+        if (previewImg) {
+          previewImg.src = data.thumbnail;
+          previewImg.classList.remove('hidden');
+        }
+
+        if (previewTitle) previewTitle.textContent = data.title;
+      } catch (err) {
+        if (previewSection) previewSection.classList.add('hidden');
+      }
+    } else {
+      
+      if (previewSection) previewSection.classList.add('hidden');
+    }
+    
+  })
 </script>
