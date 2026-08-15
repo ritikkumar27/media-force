@@ -33,6 +33,12 @@ export class DownloadsController {
         return this.downloadsService.getDownloads(userId);
     }
 
+    @ApiOperation({summary: 'Get video metadata (thumbnail.title)'})
+    @Post('metadata')
+    async getMetadata(@Body('url') url: string){
+        return this.downloadsService.getMetadata(url);
+    }
+
     @Get(':id/file')
     async downloadFile(
         @Param('id') id: string, 
