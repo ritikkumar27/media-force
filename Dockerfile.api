@@ -73,6 +73,9 @@ RUN npx turbo run build --filter=@media-force/api
 
 RUN npm prune --omit=dev
 
+RUN rm -rf .turbo
+RUN find apps packages -type d -name "src" -exec rm -rf {} +
+
 #Stage 3 : production runner
 
 FROM base AS runner
