@@ -295,7 +295,7 @@ import Layout from '../layouts/Layout.astro';
 
       historyGrid.innerHTML = '';
 
-      downloads.forEach((item: any)) => {
+      downloads.forEach((item: any) => {
         let statusBadge = '';
         if(item.status === "completed"){
           statusBadge = '<div class="badge badge-success gap-1 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Ready</div>';
@@ -305,8 +305,52 @@ import Layout from '../layouts/Layout.astro';
           statusBadge = '<div class="badge badge-warning gap-1 shadow-sm"><span class="loading loading-spinner loading-xs"></span> Processing</div>';
         }
 
-        
-      }
+        // Action Button
+
+        const actionButton = item.status === 'completed'
+          ? `<a href="/api/downloads/${item.id}/file?token=${token}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm w-full shadow-md">Download Again</a>`
+          : `<button class="btn btn-outline btn-sm w-full" disabled>Please wait...</button>`;
+
+          const cardHTML = `
+            <div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden hover:shadow-2xl transition-all hover:-translate-y-1">
+              <figure class="aspect-video relative bg-base-300">
+                <img src="${item.thumbnail || 'https://via.placeholder.com/640x360?text=No+Thumbnail'}" alt="Thumbnail" class="w-full h-full object-cover" />
+                <div class="absolute top-2 right-2">
+                  ${statusBadge}
+                </div>
+              </figure>
+              <div class="card-body p-5">
+                <h3 class="card-title text-base line-clamp-2 leading-tight" title="${item.title || item.url}">
+                  ${item.title || 'Processing Metadata...'}
+                </h3>
+                <p class="text-xs text-base-content/60 truncate mt-1">${new Date(item.createdAt).toLocaleDateString()} • ${new Date(item.createdAt).toLocaleTimeString()}</p>
+                <div class="card-actions justify-end mt-4">
+                  ${actionButton}
+                </div>
+              </div>
+            </div>
+          `;
+
+          historyGrid.innerHTML += cardHTML;
+      });
+    }catch (err) {
+      console.error(err);
+      historyGrid.innerHTML = `
+        <div class="col-span-full text-center py-8 text-error">
+          <p>Failed to load downloads. Please check your connection.</p>
+        </div>
+      `;
     }
   }
+
+  // binding refresh btn
+
+  refreshBtn?.addEventListener('click', () => {
+    refreshBtn.classList.add('animate-[spin_0.5s_linear_1]');
+    setTimeout(() => refreshBtn.classList.remove('animate-[spin_0.5s_linear_1]'), 500);
+    loadDownloads();
+  });
+
+  loadDownloads();
+
 </script>
