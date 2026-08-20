@@ -254,4 +254,59 @@ import Layout from '../layouts/Layout.astro';
     }
     
   })
+
+  //-- Downloads LOgic ---
+
+  const historyGrid = document.getElementById('downloads-history-grid');
+  const refreshBtn = document.getElementById('refresh-history-btn');
+
+  async function loadDownloads() {
+    if(!historyGrid) return;
+
+    //showing loading skeleton while fetching
+    historyGrid.innerHTML = `
+      <div class="skeleton h-56 w-full rounded-2xl bg-base-300"></div>
+      <div class="skeleton h-56 w-full rounded-2xl bg-base-300 hidden md:block"></div>
+      <div class="skeleton h-56 w-full rounded-2xl bg-base-300 hidden lg:block"></div>
+    `;
+
+    try{
+      const response = await fetch('/api/downloads', {
+        headers: {'Authorization': `Bearer ${token}`}
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch downloads');
+
+      const downloads = await response.json();
+
+      // if there are no downloadins, then mpty state
+
+      if(downloads.length === 0){
+        historyGrid.innerHTML = `
+          <div class="col-span-full text-center py-12 text-base-content/50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <p>No downloads yet. Start by pasting a URL above!</p>
+          </div>
+        `;
+        return;
+      }
+
+      historyGrid.innerHTML = '';
+
+      downloads.forEach((item: any)) => {
+        let statusBadge = '';
+        if(item.status === "completed"){
+          statusBadge = '<div class="badge badge-success gap-1 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Ready</div>';
+        } else if (item.status === 'failed'){
+          statusBadge = '<div class="badge badge-error gap-1 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Failed</div>';
+        } else {
+          statusBadge = '<div class="badge badge-warning gap-1 shadow-sm"><span class="loading loading-spinner loading-xs"></span> Processing</div>';
+        }
+
+        
+      }
+    }
+  }
 </script>
