@@ -107,7 +107,16 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <!-- card injection -->
-       
+       <div id="downloads-history-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!--Place holder loading skeletons -->
+        <div class="skeleton h-56 w-full rounded-2xl bg-base-300"></div>
+        <div class="skeleton h-56 w-full rounded-2xl bg-base-300 hidden md:block"></div>
+        <div class="skeleton h-56 w-full rounded-2xl bg-base-300 hidden lg:block"></div>
+
+
+       </div>
+
       
     </div>
   </main>
