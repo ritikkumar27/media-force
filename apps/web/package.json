@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@astrojs/node": "^11.1.1",
-    "@media-force/shared": "*",
+    "@media-force/shared": "workspace:*",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.2.1",
     "socket.io-client": "^4.8.3",
