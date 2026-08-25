@@ -7,7 +7,7 @@ import {
 } from '@nestjs/bullmq';
 import { Server, Socket } from 'socket.io';
 import { Logger, UseGuards } from '@nestjs/common';
-import { WsGuard } from 'src/auth/ws.guard';
+import { WsGuard } from '../../auth/ws.guard';
 import { JwtService } from '@nestjs/jwt';
 
 
@@ -25,7 +25,7 @@ export class DownloadsGateway extends QueueEventsHost implements OnGatewayConnec
   }
 
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   async handleConnection(client: Socket) {
     try {
