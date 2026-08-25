@@ -17,6 +17,10 @@ import { DownloadsGateway } from './downloads/downloads.gateway';
     }),
   ],
   controllers: [DownloadsController],
-  providers: [DownloadsService, YtDlpService, DownloadsProcessor, DownloadsGateway],
+  providers: [
+    DownloadsService, 
+    YtDlpService, 
+    ...(process.env.IS_WORKER === 'true' ? [DownloadsProcessor] : []), 
+    DownloadsGateway],
 })
 export class DownloadsModule {}
