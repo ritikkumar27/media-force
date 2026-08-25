@@ -26,27 +26,48 @@ export class DownloadsService {
     private downloadsQueue: Queue,
   ) {}
 
-  async addDownload(url: string, userId: string) {
-    const metadata = await this.ytDlpService.fetchMetadata(url);
+  // async addDownload(url: string, userId: string) {
+  //   const metadata = await this.ytDlpService.fetchMetadata(url);
 
+  //   const newDownload = this.downloadRepository.create({
+  //     url,
+  //     userId,
+  //     title: metadata.title,
+  //     thumbnail: metadata.thumbnail,
+  //     status: 'pending',
+  //   });
+  //   // here the heavy lifting is sent to Redis Queue, the worker of downloads.processor.ts will pick it automatically
+  //   const savedDownload = await this.downloadRepository.save(newDownload);
+
+  //   await this.downloadsQueue.add('process-video', {
+  //     url: savedDownload.url,
+  //     downloadId: savedDownload.id,
+  //   }, {
+  //     jobId: savedDownload.id, //forcing bullmq to use our databse uuid for job id
+
+  //   });
+
+  //   return savedDownload;
+  // }
+
+  async addDownload(url: string, userId: string){
     const newDownload = this.downloadRepository.create({
       url,
       userId,
-      title: metadata.title,
-      thumbnail: metadata.thumbnail,
+      title: 'Fetching Metadata...',
+      thumbnail: '',
       status: 'pending',
     });
-    // here the heavy lifting is sent to Redis Queue, the worker of downloads.processor.ts will pick it automatically
+
     const savedDownload = await this.downloadRepository.save(newDownload);
 
     await this.downloadsQueue.add('process-video', {
       url: savedDownload.url,
       downloadId: savedDownload.id,
     }, {
-      jobId: savedDownload.id, //forcing bullmq to use our databse uuid for job id
-
+      jobId: savedDownload.id,
     });
-
+    
     return savedDownload;
   }
 
