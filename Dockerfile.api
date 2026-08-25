@@ -83,7 +83,7 @@ FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-RUN apk add --no-cache yt-dlp ffmpeg
+# RUN apk add --no-cache yt-dlp ffmpeg
 
 # non-root user for security
 RUN addgroup --system --gid 1001 nodejs
