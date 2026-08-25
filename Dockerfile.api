@@ -72,7 +72,7 @@ RUN pnpm exec turbo run build --filter=@media-force/api
 #         ▼
 # Compiled dist/
 
-RUN pnpm prune --prod
+RUN CI=true pnpm prune --prod
 
 RUN rm -rf .turbo
 RUN find apps packages -type d -name "src" -exec rm -rf {} +
