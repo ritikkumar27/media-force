@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Req, Request, Res, StreamableFile, UseGuards } from '@nestjs/common';
 import { DownloadsService } from './downloads.service';
 import { CreateDownloadDto } from './dto/create-download.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {Response} from 'express';
 
