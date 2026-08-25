@@ -309,7 +309,7 @@ import Layout from '../layouts/Layout.astro';
 
         const actionButton = item.status === 'completed'
           ? `<a href="/api/downloads/${item.id}/file?token=${token}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm w-full shadow-md">Download Again</a>`
-          : `<button class="btn btn-outline btn-sm w-full" disabled>Please wait...</button>`;
+          : `<button class="btn btn-outline btn-sm w-full" disabled>Autocleaned</button>`;
 
           const cardHTML = `
             <div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden hover:shadow-2xl transition-all hover:-translate-y-1">
