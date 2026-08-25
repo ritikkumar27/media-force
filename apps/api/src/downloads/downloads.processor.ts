@@ -22,13 +22,38 @@ export class DownloadsProcessor extends WorkerHost {
 
   async process(job: Job<any, any, string>): Promise<any> {
     this.logger.log(`Worker picked up Job ${job.id}! URL: ${job.data.url}`);
-    try {
-      // Execute the download
+    // try {
+    //   // Execute the download
+    //   await this.ytDlpService.executeDownload(
+    //     job.data.url,
+    //     job.data.downloadId,
+    //     async (progressPercentage) => {
+    //       // instantly save progress to Redis. API/WebSockets can read this later
+    //       await job.updateProgress(progressPercentage);
+    //       this.logger.debug(`Job ${job.id} Progress: ${progressPercentage}%`);
+    //     },
+    //   );
+
+    //   await this.downloadRepository.update(job.data.downloadId, {
+    //     status: 'completed'
+    //   });
+
+
+    //   this.logger.log(`Job ${job.id} completed successfully! Database updated.`);
+
+    try{
+      const metadata = await this.ytDlpService.fetchMetadata(job.data.url);
+
+      await this.downloadRepository.update(job.data.downloadId, {
+        title: metadata.title,
+        thumbnail: metadata.thumbnail,
+        status: 'downloading'
+      });
+
       await this.ytDlpService.executeDownload(
         job.data.url,
         job.data.downloadId,
         async (progressPercentage) => {
-          // instantly save progress to Redis. API/WebSockets can read this later
           await job.updateProgress(progressPercentage);
           this.logger.debug(`Job ${job.id} Progress: ${progressPercentage}%`);
         },
@@ -38,9 +63,7 @@ export class DownloadsProcessor extends WorkerHost {
         status: 'completed'
       });
 
-
-      this.logger.log(`Job ${job.id} completed successfully! Database updated.`);
-
+      this.logger.log(`Job ${job.id} completed successfully!`);
 
     } catch (error) {
 
@@ -48,7 +71,9 @@ export class DownloadsProcessor extends WorkerHost {
         status: 'failed',
       });
 
-      this.logger.error(`Job ${job.id} failed:`, error.message);
+      const message = error instanceof Error ? error.message : String(error);
+
+      this.logger.error(`Job ${job.id} failed: ${message}`);
       throw error;
     }
   }
