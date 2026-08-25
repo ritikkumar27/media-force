@@ -1,4 +1,5 @@
 FROM node:22-alpine AS base
+RUN npm install -g pnpm
 
 #stage1 - prune workspace
 FROM base AS builder
