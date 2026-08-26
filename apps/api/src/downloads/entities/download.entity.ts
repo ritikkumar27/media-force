@@ -9,7 +9,7 @@ export class Download {
     @Column() // store url sent by user
     url: string;
 
-    @Column()
+    @Column({default: '720p'})
     quality: string;
 
     @Column({default: 'pending'}) //default pending
