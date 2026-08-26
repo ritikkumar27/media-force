@@ -53,6 +53,7 @@ export class DownloadsProcessor extends WorkerHost {
       await this.ytDlpService.executeDownload(
         job.data.url,
         job.data.downloadId,
+        job.data.quality,
         async (progressPercentage) => {
           await job.updateProgress(progressPercentage);
           this.logger.debug(`Job ${job.id} Progress: ${progressPercentage}%`);

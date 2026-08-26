@@ -43,12 +43,14 @@ export class YtDlpService {
   async executeDownload(
     url: string,
     downloadId: string,
+    quality: string,
     onProgress: (progress: number) => void,
   ): Promise<string> {
     return new Promise((resolve, reject) => {
       const outputPath = `./storage/${downloadId}.%(ext)s`; //%(ext)s is a special variable recognised by ytdlp engine
-
+      const maxRes = parseInt(quality) || 1080;
       const ytDlpProcess = spawn('yt-dlp', [
+        '-f', `bestvideo[height<=${maxRes}]+bestaudio/best`,
         '--newline', //prints a clean line every time the progress
         '-o',
         outputPath,
