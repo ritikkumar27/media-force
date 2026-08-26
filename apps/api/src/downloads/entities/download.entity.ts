@@ -9,6 +9,9 @@ export class Download {
     @Column() // store url sent by user
     url: string;
 
+    @Column()
+    quality: string;
+
     @Column({default: 'pending'}) //default pending
     status: string;
 

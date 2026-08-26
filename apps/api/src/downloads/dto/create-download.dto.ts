@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUrl } from "class-validator";
+import { IsEnum, IsNotEmpty, IsOptional, IsUrl } from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateDownloadDto {
@@ -8,4 +8,9 @@ export class CreateDownloadDto {
     @IsNotEmpty()
     @IsUrl()
     url: string;
+
+    @ApiProperty({example: '720p', description: 'The requested quality of the video', required: true})
+    @IsNotEmpty()
+    @IsEnum(['360p', '480p', '720p', '1080p'])
+    quality: string;
 }
