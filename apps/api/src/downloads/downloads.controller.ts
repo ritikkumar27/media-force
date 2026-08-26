@@ -20,7 +20,7 @@ export class DownloadsController {
     addDownload(@Body() createDownloadDto: CreateDownloadDto, @Request() req){
 
         const userId = req.user.sub; //req.user stricker injected by authguard
-        return this.downloadsService.addDownload(createDownloadDto.url, userId);
+        return this.downloadsService.addDownload(createDownloadDto.url, userId, createDownloadDto.quality);
     }
 
     @ApiOperation({ summary: 'Get all downloads for the current user' })
