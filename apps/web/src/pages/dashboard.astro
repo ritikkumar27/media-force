@@ -33,6 +33,7 @@ import Layout from '../layouts/Layout.astro';
       <!-- Input Card -->
       <div class="card bg-base-100 shadow-2xl border border-base-300/50 backdrop-blur-sm">
         <div class="card-body p-6 sm:p-10">
+
           <form id="download-form" class="flex flex-col sm:flex-row gap-4">
             <div class="relative flex-1">
               <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-base-content/50">
@@ -40,10 +41,18 @@ import Layout from '../layouts/Layout.astro';
               </div>
               <input type="url" id="yt-url" placeholder="https://youtube.com/watch?v=..." class="input input-bordered input-lg w-full pl-12 text-lg focus:input-primary transition-colors" required />
             </div>
+            <select id="quality-select" class="select select-bordered select-lg font-semibold w-full sm:w-auto">
+              <option value="1080p">1080p</option>
+              <option value="720p">720p</option>
+              <option value="480p">480p</option>
+              <option value="360p">360p</option>
+            </select>
             <button type="submit" id="start-btn" class="btn btn-primary btn-lg sm:w-48 shadow-lg shadow-primary/30 transition-transform active:scale-95">
               Start
             </button>
           </form>
+
+
           <p id="dashboard-error" class="text-error mt-4 font-medium text-center hidden"></p>
           <!-- Thumbnail Preview (Hidden initially) -->
           <div id="preview-section" class="mt-8 flex flex-col items-center hidden animate-fade-in">
