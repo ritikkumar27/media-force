@@ -46,9 +46,11 @@ export class DownloadsController {
         @Res({ passthrough: true }) res: any // i am using any type because i don't want to fight with monorepo workspace types right now
     ){
         const { stream, filename } = await this.downloadsService.getFileStream(id, req.user.sub);
+
+        const encodeFilename = encodeURIComponent(filename);
         res.set({
         'Content-Type': 'application/octet-stream',
-        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Disposition': `attachment; filename="${encodeFilename}"`,
         });
         return new StreamableFile(stream);
     }
