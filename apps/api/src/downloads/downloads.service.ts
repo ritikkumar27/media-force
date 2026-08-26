@@ -50,10 +50,11 @@ export class DownloadsService {
   //   return savedDownload;
   // }
 
-  async addDownload(url: string, userId: string){
+  async addDownload(url: string, userId: string, quality: string){
     const newDownload = this.downloadRepository.create({
       url,
       userId,
+      quality,
       title: 'Fetching Metadata...',
       thumbnail: '',
       status: 'pending',
@@ -64,6 +65,7 @@ export class DownloadsService {
     await this.downloadsQueue.add('process-video', {
       url: savedDownload.url,
       downloadId: savedDownload.id,
+      quality: savedDownload.quality,
     }, {
       jobId: savedDownload.id,
     });
