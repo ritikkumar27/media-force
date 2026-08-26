@@ -155,6 +155,8 @@ import Layout from '../layouts/Layout.astro';
   const urlInput = document.getElementById('yt-url') as HTMLInputElement;
   const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
   const errorMsg = document.getElementById('dashboard-error');
+
+  const qualitySelect = document.getElementById('quality-select') as HTMLSelectElement;
   
   const progressCard = document.getElementById('progress-card');
   const jobIdText = document.getElementById('job-id-text');
@@ -183,7 +185,10 @@ import Layout from '../layouts/Layout.astro';
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` 
         },
-        body: JSON.stringify({ url: urlInput.value })
+        body: JSON.stringify({ 
+          url: urlInput.value,
+          quality: qualitySelect.value  
+        })
       });
       
       const data = await response.json();
